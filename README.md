@@ -147,6 +147,6 @@ int main(void) {
 # Inline code
 C code
 
-![Project Banner](./images/flowchart_1.png)
-![Project Banner](./images/flowchart_2.png)
-![Project Banner](./images/flowchart_3.png)
+![Project Banner](./images/Flowchart_1.png)
+![Project Banner](./images/Flowchart_2.png)
+![Project Banner](./images/Flowchart_3.png)
