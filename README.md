@@ -147,6 +147,122 @@ int main(void) {
 # Inline code
 C code
 
-![Project Banner](./images/flowchart_1.png)
-![Project Banner](./images/flowchart_2.png)
-![Project Banner](./images/flowchart_3.png)
+flowchart TD
+    A["`**_printf(format, ...)**
+    Start function`"] --> B{"`Is format 
+    NULL?`"}
+    
+    B -->|Yes| C["`Return -1
+    (Error)`"]
+    
+    B -->|No| D["`Initialize:
+    • character_count = 0
+    • i = 0
+    • va_start(args, format)`"]
+    
+    D --> E{"`format[i] 
+    != '\0'?`"}
+    
+    E -->|No| F["`va_end(args)
+    Return character_count`"]
+    
+    E -->|Yes| G{"`format[i] 
+    == '%'?`"}
+    
+    G -->|No| H["`write(1, &format[i], 1)
+    character_count++
+    i++`"]
+    
+    H --> E
+    
+    G -->|Yes| I["`i++`"]
+    
+    I --> J{"`format[i] 
+    == '\0'?`"}
+    
+    J -->|Yes| K["`Break from loop`"]
+    K --> F
+    
+    J -->|No| L["`**handle_format_specifier**
+    (format[i], args)`"]
+    
+    L --> M{"`What is 
+    specifier?`"}
+    
+    M -->|'c'| N["`**print_character(args)**
+    • Extract: va_arg(args, int)
+    • Cast: int → char
+    • Write character
+    • Return 1`"]
+    
+    M -->|'s'| O["`**print_string(args)**
+    • Extract: va_arg(args, char*)
+    • Handle NULL → '(null)'
+    • Write each character
+    • Return count`"]
+    
+    M -->|'%'| P["`**print_percent()**
+    • Write '%'
+    • Return 1`"]
+    
+    M -->|'d' or 'i'| Q["`**print_integer(args)**
+    • Extract: va_arg(args, int)
+    • Handle negatives & special cases
+    • Convert to string
+    • Write digits
+    • Return count`"]
+    
+    M -->|Unknown| R["`Write '%' + specifier
+    Return 2`"]
+    
+    N --> S["`Add result to 
+    character_count
+    i++`"]
+    O --> S
+    P --> S
+    Q --> S
+    R --> S
+    
+    S --> E
+    
+    %% Detailed print_integer subprocess
+    Q --> Q1{"`num < 0?`"}
+    Q1 -->|Yes| Q2{"`num == INT_MIN?`"}
+    Q1 -->|No| Q4{"`num == 0?`"}
+    
+    Q2 -->|Yes| Q3["`Write '-2147483648'
+    Return 11`"]
+    Q2 -->|No| Q4A["`is_negative = 1
+    num = -num`"]
+    Q4A --> Q4
+    
+    Q4 -->|Yes| Q5["`Write '0'
+    Return 1`"]
+    Q4 -->|No| Q6["`Extract digits in reverse:
+    digits[count] = (num % 10) + '0'
+    num = num / 10`"]
+    
+    Q6 --> Q7{"`num > 0?`"}
+    Q7 -->|Yes| Q6
+    Q7 -->|No| Q8{"`is_negative?`"}
+    
+    Q8 -->|Yes| Q9["`Write '-'
+    count++`"]
+    Q8 -->|No| Q10["`Write digits in 
+    reverse order`"]
+    Q9 --> Q10
+    
+    Q10 --> Q11["`Return count`"]
+    
+    %% Style definitions
+    classDef startEnd fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef process fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,color:#000
+    classDef decision fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000
+    classDef function fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px,color:#000
+    classDef error fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
+    
+    class A,F startEnd
+    class D,H,I,K,S process
+    class B,E,G,J,M,Q1,Q2,Q4,Q7,Q8 decision
+    class L,N,O,P,Q function
+    class C,R error
